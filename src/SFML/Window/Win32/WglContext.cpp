@@ -66,12 +66,10 @@ void ensureExtensionsInit(HDC deviceContext)
 ////////////////////////////////////////////////////////////
 String getErrorString(DWORD errorCode)
 {
-    std::basic_ostringstream<TCHAR, std::char_traits<TCHAR> > ss;
-    TCHAR errBuff[256];
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, errorCode, 0, errBuff, sizeof(errBuff), NULL);
-    ss << errBuff;
-    String errMsg(ss.str());
-
+    PTCHAR buffer;
+    FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, errorCode, 0, reinterpret_cast<PTCHAR>(&buffer), 0, NULL);
+    String errMsg(buffer);
+    LocalFree(buffer);
     return errMsg;
 }
 
