@@ -507,6 +507,7 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_rawMouse       (false),
+m_rawMouseEnabled(false),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     (false),
@@ -556,6 +557,7 @@ m_hiddenCursor   (0),
 m_lastCursor     (None),
 m_keyRepeat      (true),
 m_rawMouse       (false),
+m_rawMouseEnabled(false),
 m_previousSize   (-1, -1),
 m_useSizeHints   (false),
 m_fullscreen     ((style & Style::Fullscreen) != 0),
@@ -1132,7 +1134,8 @@ void WindowImplX11::setKeyRepeatEnabled(bool enabled)
 
 void WindowImplX11::setRawMouseEnabled(bool enabled)
 {
-    if (!m_rawMouse)
+    // Check if raw input is availlable and needs to be changed
+    if (!m_rawMouse || m_rawMouseEnabled == enabled)
         return;
 
     XIEventMask eventMask;
@@ -1149,6 +1152,8 @@ void WindowImplX11::setRawMouseEnabled(bool enabled)
 
     if (XISelectEvents(m_display, DefaultRootWindow(m_display), &eventMask, 1) != Success)
         err() << "Could not set XInput2 event mask\n" << std::endl;
+    else
+        m_rawMouseEnabled = enabled;
 }
 
 
